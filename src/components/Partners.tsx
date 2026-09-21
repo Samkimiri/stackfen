@@ -34,11 +34,15 @@ export default function Partners({ eyebrow = "03 · Partners" }: PartnersProps) 
             const tile = (
               <div className="flex h-full flex-col items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white p-6 text-center transition-all duration-300 hover:-translate-y-1 hover:border-amber-600/40 hover:shadow-lg hover:shadow-amber-600/5 dark:border-slate-800 dark:bg-slate-900/50">
                 {partner.logo ? (
-                  <img
-                    src={partner.logo}
-                    alt={partner.name}
-                    className="h-12 max-w-full object-contain grayscale transition-all duration-300 group-hover:grayscale-0"
-                  />
+                  // White backing so transparent/dark-text logos stay legible in dark mode.
+                  <div className="flex h-24 w-full items-center justify-center rounded-xl bg-white p-3">
+                    <img
+                      src={partner.logo}
+                      alt={partner.name}
+                      loading="lazy"
+                      className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </div>
                 ) : (
                   <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 font-display text-sm font-bold text-amber-700 dark:text-amber-400">
                     {initials(partner.name)}
