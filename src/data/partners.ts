@@ -20,6 +20,6 @@ export const partners: Partner[] = [
     id: "power-learn-project",
     name: "Power Learn Project",
     logo: "/partners/power-learn-project.png",
-    url: null,
+    url: "https://academy.powerlearnprojectafrica.org/login",
   },
 ];

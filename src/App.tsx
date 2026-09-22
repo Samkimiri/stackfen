@@ -83,8 +83,8 @@ function MainSite() {
         <Hero />
         <Services />
         <About />
-        <Partners eyebrow="03 · Partners" />
-        <Projects eyebrow="04 · Projects" />
+        <Projects eyebrow="03 · Projects" />
+        <Partners eyebrow="04 · Partners" />
         <Testimonials eyebrow="05 · Testimonials" />
         <Contact eyebrow="06 · Contact" />
       </main>

@@ -43,10 +43,15 @@ type Phase = "typing" | "brand" | "founder" | "welcome" | "done";
 const PHASES: Phase[] = ["typing", "brand", "founder", "welcome"];
 
 const blurReveal = {
-  initial: { opacity: 0, y: 20, filter: "blur(10px)" },
-  animate: { opacity: 1, y: 0, filter: "blur(0px)" },
-  exit: { opacity: 0, y: -12, filter: "blur(8px)" },
+  initial: { opacity: 0, y: 24, scale: 0.97, filter: "blur(10px)" },
+  animate: { opacity: 1, y: 0, scale: 1, filter: "blur(0px)" },
+  exit: { opacity: 0, y: -14, scale: 0.98, filter: "blur(8px)" },
 };
+
+// Springs read as snappier and more "designed" than duration-based tweens —
+// used for the phase-to-phase transitions (brand/founder/welcome), while the
+// terminal keeps a plain tween since it's driven by the typing effect.
+const springTransition = { type: "spring" as const, stiffness: 140, damping: 18, mass: 0.9 };
 
 interface IntroAnimationProps {
   onComplete: () => void;
@@ -152,12 +157,20 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4 }}
         >
-          {/* Ambient glow — same visual language as the Hero's orbs, so the
-              intro feels like part of the same brand rather than a bolted-on
-              splash screen. */}
+          {/* Subtle grid + film grain give the flat dark surface some
+              tactile depth instead of reading as a solid color fill. */}
+          <div
+            aria-hidden
+            className="bg-grid pointer-events-none absolute inset-0 text-white/[0.025] [mask-image:radial-gradient(circle_at_center,black,transparent_75%)]"
+          />
+          <div aria-hidden className="bg-grain pointer-events-none absolute inset-0 mix-blend-overlay" />
+
+          {/* Ambient aurora — three drifting, differently-timed blobs (same
+              visual language as the Hero's orbs) so the intro feels like part
+              of the same brand rather than a bolted-on splash screen. */}
           <motion.div
             aria-hidden
-            className="pointer-events-none absolute -top-24 right-[-10%] h-[420px] w-[420px] rounded-full bg-amber-600/20 blur-[120px]"
+            className="pointer-events-none absolute -top-24 right-[-10%] h-[420px] w-[420px] rounded-full bg-amber-600/25 blur-[120px]"
             animate={{ y: [0, 24, 0], x: [0, -16, 0] }}
             transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
           />
@@ -166,6 +179,12 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
             className="pointer-events-none absolute bottom-[-10%] left-[-8%] h-[360px] w-[360px] rounded-full bg-amber-500/10 blur-[110px]"
             animate={{ y: [0, -20, 0], x: [0, 14, 0] }}
             transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-1/2 h-[300px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-500/5 blur-[130px]"
+            animate={{ scale: [1, 1.25, 1] }}
+            transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
           />
 
           <button
@@ -176,16 +195,14 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
             Skip intro →
           </button>
 
-          {/* Progress dots */}
-          <div className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 gap-2">
-            {PHASES.map((p, i) => (
-              <span
-                key={p}
-                className={`h-1.5 rounded-full transition-all duration-500 ${
-                  i === phaseIndex ? "w-6 bg-amber-400" : "w-1.5 bg-slate-700"
-                }`}
-              />
-            ))}
+          {/* Progress bar — a slim gradient fill rather than dots, closer to
+              a modern app's load/onboarding indicator. */}
+          <div className="absolute bottom-8 left-1/2 z-10 h-[3px] w-40 -translate-x-1/2 overflow-hidden rounded-full bg-slate-800">
+            <motion.div
+              className="h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-300"
+              animate={{ width: `${((phaseIndex + 1) / PHASES.length) * 100}%` }}
+              transition={{ duration: 0.6, ease: [0.21, 0.47, 0.32, 0.98] }}
+            />
           </div>
 
           <AnimatePresence mode="wait">
@@ -196,11 +213,11 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
                 transition={{ duration: 0.4 }}
                 className="relative z-10 w-full max-w-lg overflow-hidden rounded-3xl border border-slate-800/80 bg-slate-900/70 shadow-2xl backdrop-blur-xl"
               >
-                <div className="flex items-center gap-1.5 border-b border-slate-800/80 bg-slate-800/40 px-4 py-2.5">
-                  <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-amber-400" />
-                  <span className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-                  <span className="ml-2 text-[10px] text-slate-500">stackfen — zsh</span>
+                <div className="flex items-center gap-2 border-b border-slate-800/80 bg-slate-800/40 px-4 py-2.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-amber-400" />
+                  <span className="font-mono text-[10px] uppercase tracking-[0.15em] text-slate-500">
+                    stackfen — zsh
+                  </span>
                 </div>
                 <div className="min-h-[220px] p-5 font-mono text-[13px] leading-relaxed sm:text-sm">
                   {typed.split("\n").map((line, i) => renderTypedLine(line, i))}
@@ -210,7 +227,7 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
             )}
 
             {phase === "brand" && (
-              <motion.div key="brand" {...blurReveal} transition={{ duration: 0.6, ease: [0.21, 0.47, 0.32, 0.98] }} className="relative z-10 text-center">
+              <motion.div key="brand" {...blurReveal} transition={springTransition} className="relative z-10 text-center">
                 {SPARKLES.map((s, i) => (
                   <motion.span
                     key={i}
@@ -248,7 +265,7 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
               <motion.div
                 key="founder"
                 {...blurReveal}
-                transition={{ duration: 0.6, ease: [0.21, 0.47, 0.32, 0.98] }}
+                transition={springTransition}
                 className="relative z-10 flex flex-col items-center text-center"
               >
                 <div className="relative">
@@ -268,7 +285,7 @@ export default function IntroAnimation({ onComplete }: IntroAnimationProps) {
               <motion.div
                 key="welcome"
                 {...blurReveal}
-                transition={{ duration: 0.6, ease: [0.21, 0.47, 0.32, 0.98] }}
+                transition={springTransition}
                 className="relative z-10 text-center"
               >
                 <h2 className="font-display text-4xl font-bold tracking-tight text-slate-50 sm:text-6xl">
