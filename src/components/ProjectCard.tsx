@@ -1,8 +1,10 @@
+import { Link } from "react-router-dom";
 import { ExternalLink, ImageOff } from "lucide-react";
 import type { Project } from "../types";
 import { accentClasses } from "../lib/accent";
 import { GithubIcon } from "./icons";
 import BrowserFrame from "./BrowserFrame";
+import SpotlightCard from "./SpotlightCard";
 
 interface ProjectCardProps {
   project: Project;
@@ -13,7 +15,7 @@ export default function ProjectCard({ project, onOpen }: ProjectCardProps) {
   const accent = accentClasses[project.accent];
 
   return (
-    <div className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all duration-300 hover:border-amber-600/40 hover:shadow-xl hover:shadow-amber-600/5 dark:border-slate-800 dark:bg-slate-900/50 dark:hover:border-amber-600/30">
+    <SpotlightCard className="group flex flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white transition-all duration-300 hover:border-amber-600/40 hover:shadow-xl hover:shadow-amber-600/5 dark:border-slate-800 dark:bg-slate-900/50 dark:hover:border-amber-600/30">
       <button type="button" onClick={() => onOpen(project)} className="block aspect-video overflow-hidden bg-slate-100 dark:bg-slate-800">
         <BrowserFrame url={project.liveUrl}>
           {project.screenshot ? (
@@ -84,15 +86,23 @@ export default function ProjectCard({ project, onOpen }: ProjectCardProps) {
             <span className="text-slate-400 dark:text-slate-600">[GITHUB LINK]</span>
           )}
 
-          <button
-            type="button"
-            onClick={() => onOpen(project)}
-            className="ml-auto text-slate-500 underline-offset-2 transition-colors hover:text-slate-800 hover:underline dark:text-slate-400 dark:hover:text-slate-100"
-          >
-            Details
-          </button>
+          <div className="ml-auto flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => onOpen(project)}
+              className="text-slate-500 underline-offset-2 transition-colors hover:text-slate-800 hover:underline dark:text-slate-400 dark:hover:text-slate-100"
+            >
+              Details
+            </button>
+            <Link
+              to={`/projects/${project.id}`}
+              className="text-amber-700 underline-offset-2 transition-colors hover:underline dark:text-amber-400"
+            >
+              Case study
+            </Link>
+          </div>
         </div>
       </div>
-    </div>
+    </SpotlightCard>
   );
 }

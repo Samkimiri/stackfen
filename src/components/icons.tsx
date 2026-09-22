@@ -35,6 +35,83 @@ export function LinkedinIcon({ size = 20, className }: IconProps) {
   );
 }
 
+// Tech-stack marks below are hand-rolled (lucide-react has no brand icons)
+// and kept single-color/currentColor, matching the monochrome-to-amber
+// hover treatment used for the rest of the site's icon strips.
+
+export function ReactIcon({ size = 20, className }: IconProps) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.4}
+      className={className}
+      aria-hidden="true"
+    >
+      <circle cx="12" cy="12" r="2.1" fill="currentColor" stroke="none" />
+      <ellipse cx="12" cy="12" rx="10" ry="4" />
+      <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(60 12 12)" />
+      <ellipse cx="12" cy="12" rx="10" ry="4" transform="rotate(120 12 12)" />
+    </svg>
+  );
+}
+
+export function NodeIcon({ size = 20, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M12 .8 1.5 6.9v10.2L12 23.2l10.5-6.1V6.9L12 .8Zm0 2.3 8.5 4.9v9.8L12 22.7l-8.5-4.9V8L12 3.1Z" />
+      <path d="M12 6.4c-3.1 0-5.6 2.5-5.6 5.6s2.5 5.6 5.6 5.6 5.6-2.5 5.6-5.6S15.1 6.4 12 6.4Zm0 9.2c-2 0-3.6-1.6-3.6-3.6S10 8.4 12 8.4s3.6 1.6 3.6 3.6-1.6 3.6-3.6 3.6Z" />
+    </svg>
+  );
+}
+
+export function TypeScriptIcon({ size = 20, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <rect x="1.5" y="1.5" width="21" height="21" rx="3.5" stroke="currentColor" strokeWidth={1.4} />
+      <text
+        x="12"
+        y="16.5"
+        textAnchor="middle"
+        fontSize="10"
+        fontWeight="700"
+        fontFamily="inherit"
+        fill="currentColor"
+      >
+        TS
+      </text>
+    </svg>
+  );
+}
+
+export function TailwindIcon({ size = 20, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M12 6c-2.67 0-4.33 1.33-5 4 1-1.33 2.17-1.83 3.5-1.5.76.19 1.31.75 1.91 1.36C13.36 10.86 14.5 12 17 12c2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.31-.75-1.91-1.36C15.64 7.14 14.5 6 12 6Z" />
+      <path d="M7 12c-2.67 0-4.33 1.33-5 4 1-1.33 2.17-1.83 3.5-1.5.76.19 1.31.75 1.91 1.36C8.36 16.86 9.5 18 12 18c2.67 0 4.33-1.33 5-4-1 1.33-2.17 1.83-3.5 1.5-.76-.19-1.31-.75-1.91-1.36C10.64 13.14 9.5 12 7 12Z" />
+    </svg>
+  );
+}
+
+export function SupabaseIcon({ size = 20, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M13.4 23c-.5.6-1.5.3-1.55-.5L11.2 13.6H5.1c-1.05 0-1.6-1.25-.9-2.03L11.6.5c.5-.6 1.5-.3 1.55.5l.65 8.9h6.1c1.05 0 1.6 1.25.9 2.03L13.4 23Z" />
+    </svg>
+  );
+}
+
+export function VercelIcon({ size = 20, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M12 2 22 20H2L12 2Z" />
+    </svg>
+  );
+}
+
 export function WhatsappIcon({ size = 20, className }: IconProps) {
   return (
     <svg

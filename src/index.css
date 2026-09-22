@@ -84,6 +84,51 @@ h4 {
   }
 }
 
+/* Cursor-tracking spotlight glow for cards — .spotlight-track sets --x/--y
+   via JS on mousemove (see SpotlightCard.tsx), and this pseudo-element
+   paints a soft radial highlight there. Naturally desktop-only: touch
+   devices don't fire continuous mousemove, so the glow just never appears. */
+.spotlight-track {
+  position: relative;
+  isolation: isolate;
+}
+.spotlight-track::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: radial-gradient(320px circle at var(--x, 50%) var(--y, 50%), rgba(217, 119, 6, 0.14), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+.spotlight-track:hover::before {
+  opacity: 1;
+}
+.spotlight-track > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Seamless horizontal logo marquee — the track renders its children twice
+   (see Partners.tsx) and this animates it exactly -50%, so the loop point
+   is invisible regardless of how many logos there are. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
 /* Fine film-grain texture — a cheap, cache-free way to give a flat dark
    surface (the intro) some tactile depth instead of looking like a solid
    color fill. Kept very low-opacity so it reads as texture, not noise. */

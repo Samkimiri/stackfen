@@ -4,12 +4,16 @@ import { Analytics } from "@vercel/analytics/react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Services from "./components/Services";
+import Process from "./components/Process";
+import TechStack from "./components/TechStack";
 import About from "./components/About";
 import Partners from "./components/Partners";
 import Projects from "./components/Projects";
 import Testimonials from "./components/Testimonials";
+import FAQ from "./components/FAQ";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import StickyCTA from "./components/StickyCTA";
 import { SiteDataProvider } from "./context/SiteDataContext";
 import { trackPageView } from "./lib/trackView";
 
@@ -19,6 +23,7 @@ import { trackPageView } from "./lib/trackView";
 const AdminApp = lazy(() => import("./admin/AdminApp"));
 const Resume = lazy(() => import("./components/Resume"));
 const Portfolio = lazy(() => import("./components/Portfolio"));
+const ProjectCaseStudy = lazy(() => import("./components/ProjectCaseStudy"));
 const NotFound = lazy(() => import("./components/NotFound"));
 const Privacy = lazy(() => import("./components/Privacy"));
 const Terms = lazy(() => import("./components/Terms"));
@@ -82,13 +87,17 @@ function MainSite() {
       <main>
         <Hero />
         <Services />
-        <About />
-        <Projects eyebrow="03 · Projects" />
-        <Partners eyebrow="04 · Partners" />
-        <Testimonials eyebrow="05 · Testimonials" />
-        <Contact eyebrow="06 · Contact" />
+        <Process eyebrow="02 · How We Work" />
+        <TechStack />
+        <About eyebrow="03 · About" />
+        <Projects eyebrow="04 · Projects" />
+        <Partners eyebrow="05 · Partners" />
+        <Testimonials eyebrow="06 · Testimonials" />
+        <FAQ eyebrow="07 · FAQ" />
+        <Contact eyebrow="08 · Contact" />
       </main>
       <Footer />
+      <StickyCTA />
     </div>
   );
 }
@@ -101,6 +110,7 @@ export default function App() {
           <Route path="/" element={<MainSite />} />
           <Route path="/resume" element={<Resume />} />
           <Route path="/portfolio" element={<Portfolio />} />
+          <Route path="/projects/:id" element={<ProjectCaseStudy />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/admin/*" element={<AdminApp />} />

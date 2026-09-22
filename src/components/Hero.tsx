@@ -3,6 +3,7 @@ import { ArrowRight, Mail } from "lucide-react";
 import { useSiteData } from "../context/SiteDataContext";
 import { GithubIcon, LinkedinIcon, WhatsappIcon } from "./icons";
 import BrowserFrame from "./BrowserFrame";
+import AnimatedNumber from "./AnimatedNumber";
 
 // The industries/clients line is a factual summary, not a stat that changes
 // per project — kept as a short constant rather than derived, so it reads
@@ -116,13 +117,13 @@ export default function Hero() {
           >
             <div>
               <p className="font-display text-xl font-bold text-slate-950 dark:text-slate-50">
-                {projects.length}+
+                <AnimatedNumber value={projects.length} suffix="+" />
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-500">Products shipped</p>
             </div>
             <div>
               <p className="font-display text-xl font-bold text-slate-950 dark:text-slate-50">
-                {INDUSTRIES.length}
+                <AnimatedNumber value={INDUSTRIES.length} />
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-500">{INDUSTRIES.join(" · ")}</p>
             </div>
