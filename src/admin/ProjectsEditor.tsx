@@ -3,6 +3,7 @@ import { useSiteData } from "../context/SiteDataContext";
 import { saveSiteContent } from "../lib/siteContent";
 import { uploadProjectScreenshot } from "../lib/storage";
 import { generateProjectScreenshot } from "../lib/generateImage";
+import { fetchLinkPreview } from "../lib/linkPreview";
 import type { Project } from "../types";
 import { cardClasses, inputClasses, labelClasses, SaveBar, IconButton } from "./shared";
 
@@ -22,6 +23,16 @@ function newProject(): Project {
   };
 }
 
+function slugify(input: string): string {
+  return (
+    input
+      .toLowerCase()
+      .replace(/^www\./, "")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || "project"
+  );
+}
+
 export default function ProjectsEditor() {
   const { projects, refresh } = useSiteData();
   const [form, setForm] = useState<Project[]>(projects);
@@ -31,6 +42,11 @@ export default function ProjectsEditor() {
   const [uploadState, setUploadState] = useState<Record<string, { uploading: boolean; error: string | null }>>({});
   const [aiPrompt, setAiPrompt] = useState<Record<string, string>>({});
   const [aiState, setAiState] = useState<Record<string, { generating: boolean; error: string | null }>>({});
+  const [linkUrl, setLinkUrl] = useState("");
+  const [linkState, setLinkState] = useState<{ loading: boolean; error: string | null }>({
+    loading: false,
+    error: null,
+  });
 
   function update(index: number, project: Project) {
     const next = [...form];
@@ -43,8 +59,47 @@ export default function ProjectsEditor() {
     setForm([...form, newProject()]);
   }
 
-  function removeProject(index: number) {
+  async function handleAddFromLink() {
+    const url = linkUrl.trim();
+    if (!url) return;
+
+    setLinkState({ loading: true, error: null });
+    const { preview, error } = await fetchLinkPreview(url);
+    setLinkState({ loading: false, error });
+    if (!preview) return;
+
+    const hostname = (() => {
+      try {
+        return new URL(preview.liveUrl).hostname;
+      } catch {
+        return "project";
+      }
+    })();
+
+    const project: Project = {
+      id: `${slugify(hostname)}-${Date.now().toString(36)}`,
+      name: preview.name || hostname,
+      tagline: "",
+      description: preview.description,
+      tags: [],
+      liveUrl: preview.liveUrl,
+      repoUrl: null,
+      screenshot: preview.screenshot,
+      accent: "emerald",
+    };
+
+    setForm([...form, project]);
+    setLinkUrl("");
+    setSaved(false);
+  }
+
+  function removeProject(index: number, project: Project) {
+    const ok = window.confirm(
+      `Delete "${project.name || "this project"}"? It'll be gone from the site once you save — this can't be undone.`,
+    );
+    if (!ok) return;
     setForm(form.filter((_, i) => i !== index));
+    setSaved(false);
   }
 
   function move(index: number, direction: -1 | 1) {
@@ -121,7 +176,7 @@ export default function ProjectsEditor() {
               >
                 ↓
               </button>
-              <IconButton label="Remove" onClick={() => removeProject(index)} />
+              <IconButton label="Delete" onClick={() => removeProject(index, project)} />
             </div>
           </div>
 
@@ -248,12 +303,43 @@ export default function ProjectsEditor() {
         </div>
       ))}
 
+      <div className={cardClasses}>
+        <label className={labelClasses}>Add project from a link</label>
+        <div className="flex items-center gap-2">
+          <input
+            className={inputClasses}
+            placeholder="https://your-project.vercel.app"
+            value={linkUrl}
+            onChange={(e) => setLinkUrl(e.target.value)}
+            disabled={linkState.loading}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                handleAddFromLink();
+              }
+            }}
+          />
+          <button
+            type="button"
+            onClick={handleAddFromLink}
+            disabled={linkState.loading || !linkUrl.trim()}
+            className="shrink-0 rounded-full bg-emerald-500 px-4 py-2 text-xs font-medium text-neutral-950 transition-colors hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {linkState.loading ? "Fetching…" : "Add from link"}
+          </button>
+        </div>
+        {linkState.error && <p className="mt-2 text-xs text-red-600 dark:text-red-400">{linkState.error}</p>}
+        <p className="mt-2 text-xs text-neutral-500 dark:text-neutral-500">
+          Pulls the name, description, and preview image straight from the page below — review, add tags, and save.
+        </p>
+      </div>
+
       <button
         type="button"
         onClick={addProject}
         className="rounded-full border border-dashed border-neutral-300 px-4 py-2 text-sm text-neutral-600 hover:border-emerald-500 hover:text-emerald-600 dark:border-neutral-700 dark:text-neutral-400"
       >
-        + Add project
+        + Add blank project
       </button>
 
       <SaveBar onSave={handleSave} saving={saving} error={error} saved={saved} />
